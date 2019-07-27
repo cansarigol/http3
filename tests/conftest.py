@@ -2,6 +2,7 @@ import asyncio
 
 import pytest
 import trustme
+import uvloop
 from cryptography.hazmat.primitives.serialization import (
     BestAvailableEncryption,
     Encoding,
@@ -9,6 +10,8 @@ from cryptography.hazmat.primitives.serialization import (
 )
 from uvicorn.config import Config
 from uvicorn.main import Server
+
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
 async def app(scope, receive, send):

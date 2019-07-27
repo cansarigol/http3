@@ -14,6 +14,8 @@ import ssl
 import typing
 from types import TracebackType
 
+import uvloop
+
 from .config import PoolLimits, TimeoutConfig
 from .exceptions import ConnectTimeout, PoolTimeout, ReadTimeout, WriteTimeout
 from .interfaces import (
@@ -24,6 +26,9 @@ from .interfaces import (
     ConcurrencyBackend,
     Protocol,
 )
+
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
 SSL_MONKEY_PATCH_APPLIED = False
 

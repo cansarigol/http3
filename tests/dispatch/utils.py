@@ -5,6 +5,7 @@ import typing
 import h2.config
 import h2.connection
 import h2.events
+import uvloop
 
 from httpx import (
     AsyncioBackend,
@@ -14,6 +15,8 @@ from httpx import (
     Request,
     TimeoutConfig,
 )
+
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
 class MockHTTP2Backend(AsyncioBackend):

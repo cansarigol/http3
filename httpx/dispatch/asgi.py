@@ -1,9 +1,13 @@
 import asyncio
 import typing
 
+import uvloop
+
 from ..config import CertTypes, TimeoutTypes, VerifyTypes
 from ..interfaces import AsyncDispatcher
 from ..models import AsyncRequest, AsyncResponse
+
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
 class ASGIDispatch(AsyncDispatcher):

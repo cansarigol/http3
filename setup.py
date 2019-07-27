@@ -52,6 +52,7 @@ setup(
         "h2==3.*",
         "idna==2.*",
         "rfc3986==1.*",
+        "uvloop",
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",

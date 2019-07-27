@@ -4,8 +4,12 @@ import ssl
 import typing
 
 import certifi
+import uvloop
 
 from .__version__ import __version__
+
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
 CertTypes = typing.Union[str, typing.Tuple[str, str], typing.Tuple[str, str, str]]
 VerifyTypes = typing.Union[str, bool]

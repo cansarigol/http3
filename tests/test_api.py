@@ -2,8 +2,11 @@ import asyncio
 import functools
 
 import pytest
+import uvloop
 
 import httpx
+
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
 def threadpool(func):

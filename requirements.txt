@@ -4,6 +4,7 @@ h11==0.8.*
 h2==3.*
 idna==2.*
 rfc3986==1.*
+uvloop
 
 # Optional
 brotlipy==0.7.*
