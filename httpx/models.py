@@ -514,12 +514,12 @@ class BaseRequest:
         self, data: dict = None, files: RequestFiles = None, json: typing.Any = None
     ) -> typing.Tuple[bytes, str]:
         if json is not None:
-            content = jsonlib.dumps(json).encode("utf-8")
+            content = jsonlib.dumps(json).encode()
             content_type = "application/json"
         elif files is not None:
             content, content_type = multipart_encode(data or {}, files)
         elif data is not None:
-            content = urlencode(data, doseq=True).encode("utf-8")
+            content = urlencode(data, doseq=True).encode()
             content_type = "application/x-www-form-urlencoded"
         else:
             content = b""
@@ -597,7 +597,7 @@ class AsyncRequest(BaseRequest):
             if content_type:
                 self.headers["Content-Type"] = content_type
         elif isinstance(data, (str, bytes)):
-            data = data.encode("utf-8") if isinstance(data, str) else data
+            data = data.encode() if isinstance(data, str) else data
             self.is_streaming = False
             self.content = data
         else:
@@ -647,7 +647,7 @@ class Request(BaseRequest):
             if content_type:
                 self.headers["Content-Type"] = content_type
         elif isinstance(data, (str, bytes)):
-            data = data.encode("utf-8") if isinstance(data, str) else data
+            data = data.encode() if isinstance(data, str) else data
             self.is_streaming = False
             self.content = data
         else:

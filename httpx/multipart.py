@@ -30,9 +30,7 @@ class DataField(Field):
         )
 
     def render_data(self) -> bytes:
-        return (
-            self.value if isinstance(self.value, bytes) else self.value.encode("utf-8")
-        )
+        return self.value if isinstance(self.value, bytes) else self.value.encode()
 
 
 class FileField(Field):
@@ -74,7 +72,7 @@ class FileField(Field):
 
     def render_data(self) -> bytes:
         content = self.file.read()
-        return content.encode("utf-8") if isinstance(content, str) else content
+        return content.encode() if isinstance(content, str) else content
 
 
 def iter_fields(data: dict, files: dict) -> typing.Iterator[Field]:

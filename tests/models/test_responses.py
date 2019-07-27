@@ -105,7 +105,7 @@ def test_response_set_explicit_encoding():
 
 
 def test_response_force_encoding():
-    response = httpx.Response(200, content="Snowman: ☃".encode("utf-8"))
+    response = httpx.Response(200, content="Snowman: ☃".encode())
     response.encoding = "iso-8859-1"
     assert response.status_code == 200
     assert response.reason_phrase == "OK"
