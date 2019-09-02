@@ -3,7 +3,7 @@ import typing
 from ..concurrency.asyncio import AsyncioBackend
 from ..concurrency.base import ConcurrencyBackend
 from ..config import CertTypes, TimeoutTypes, VerifyTypes
-from ..models import AsyncRequest, AsyncResponse
+from ..models import AsyncRequest, AsyncResponse, ProxyTypes
 from .base import AsyncDispatcher
 
 
@@ -59,6 +59,7 @@ class ASGIDispatch(AsyncDispatcher):
     async def send(
         self,
         request: AsyncRequest,
+        proxies: ProxyTypes = None,
         verify: VerifyTypes = None,
         cert: CertTypes = None,
         timeout: TimeoutTypes = None,

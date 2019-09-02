@@ -14,7 +14,7 @@ from ..config import (
     TimeoutTypes,
     VerifyTypes,
 )
-from ..models import AsyncRequest, AsyncResponse, Origin
+from ..models import URL, AsyncRequest, AsyncResponse, Origin, ProxyTypes
 from ..utils import get_logger
 from .base import AsyncDispatcher
 from .http2 import HTTP2Connection
@@ -51,12 +51,15 @@ class HTTPConnection(AsyncDispatcher):
     async def send(
         self,
         request: AsyncRequest,
+        proxies: ProxyTypes = None,
         verify: VerifyTypes = None,
         cert: CertTypes = None,
         timeout: TimeoutTypes = None,
     ) -> AsyncResponse:
         if self.h11_connection is None and self.h2_connection is None:
-            await self.connect(verify=verify, cert=cert, timeout=timeout)
+            await self.connect(
+                verify=verify, proxies=proxies, cert=cert, timeout=timeout
+            )
 
         if self.h2_connection is not None:
             response = await self.h2_connection.send(request, timeout=timeout)
@@ -68,6 +71,7 @@ class HTTPConnection(AsyncDispatcher):
 
     async def connect(
         self,
+        proxies: ProxyTypes = None,
         verify: VerifyTypes = None,
         cert: CertTypes = None,
         timeout: TimeoutTypes = None,
@@ -84,20 +88,59 @@ class HTTPConnection(AsyncDispatcher):
         else:
             on_release = functools.partial(self.release_func, self)
 
-        logger.debug(f"start_connect host={host!r} port={port!r} timeout={timeout!r}")
         stream = await self.backend.connect(host, port, ssl_context, timeout)
+
+        client_stream = None
+        proxy_log_str = ""
+        if proxies:
+            proxy_host, proxy_port = await self.get_suitable_proxy(proxies)
+            if proxy_host:
+                client_stream = await self.backend.connect(  # type: ignore
+                    proxy_host, proxy_port, ssl_context, timeout
+                )
+                proxy_log_str = f"proxy={proxy_host!r}:{proxy_port!r}"
+
+        logger.debug(
+            f"start_connect host={host!r} port={port!r} "
+            f"timeout={timeout!r} {proxy_log_str}"
+        )
         http_version = stream.get_http_version()
         logger.debug(f"connected http_version={http_version!r}")
 
         if http_version == "HTTP/2":
             self.h2_connection = HTTP2Connection(
-                stream, self.backend, on_release=on_release
+                stream, self.backend, on_release=on_release, client_stream=client_stream
             )
         else:
             assert http_version == "HTTP/1.1"
             self.h11_connection = HTTP11Connection(
-                stream, self.backend, on_release=on_release
+                stream, self.backend, on_release=on_release, client_stream=client_stream
             )
+
+    async def get_suitable_proxy(
+        self, proxies: ProxyTypes
+    ) -> typing.Tuple[typing.Optional[str], typing.Optional[int]]:
+        if not proxies:
+            return None, None
+
+        def raise_type_error() -> None:
+            raise TypeError(
+                f"Proxy format is not corret proxies {proxies}, "
+                "Sample: proxies = {'http': 'http://x.x.x.x:81', "
+                "'https': 'http://x.x.x.x:444'}"
+            )
+
+        if not isinstance(proxies, dict):
+            raise_type_error()
+
+        proxy_url: URL
+        if self.origin.scheme in proxies.keys():
+            proxy_url = proxies[self.origin.scheme]  # type: ignore
+            if isinstance(proxy_url, str):
+                proxy_url = URL(proxy_url)
+            elif not isinstance(proxy_url, URL):
+                raise_type_error()
+        return proxy_url.host, proxy_url.port_nullable
 
     async def get_ssl_context(self, ssl: SSLConfig) -> typing.Optional[ssl.SSLContext]:
         if not self.origin.is_ssl:

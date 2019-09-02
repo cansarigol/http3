@@ -5,6 +5,7 @@ from ..models import (
     AsyncRequestData,
     AsyncResponse,
     AsyncResponseContent,
+    ProxyTypes,
     Request,
     RequestData,
     Response,
@@ -27,6 +28,7 @@ class ThreadedDispatcher(AsyncDispatcher):
     async def send(
         self,
         request: AsyncRequest,
+        proxies: ProxyTypes = None,
         verify: VerifyTypes = None,
         cert: CertTypes = None,
         timeout: TimeoutTypes = None,
@@ -46,6 +48,7 @@ class ThreadedDispatcher(AsyncDispatcher):
         func = self.sync_dispatcher.send
         kwargs = {
             "request": sync_request,
+            "proxies": proxies,
             "verify": verify,
             "cert": cert,
             "timeout": timeout,

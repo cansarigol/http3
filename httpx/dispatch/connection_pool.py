@@ -11,7 +11,7 @@ from ..config import (
     TimeoutTypes,
     VerifyTypes,
 )
-from ..models import AsyncRequest, AsyncResponse, Origin
+from ..models import AsyncRequest, AsyncResponse, Origin, ProxyTypes
 from ..utils import get_logger
 from .base import AsyncDispatcher
 from .connection import HTTPConnection
@@ -111,6 +111,7 @@ class ConnectionPool(AsyncDispatcher):
     async def send(
         self,
         request: AsyncRequest,
+        proxies: ProxyTypes = None,
         verify: VerifyTypes = None,
         cert: CertTypes = None,
         timeout: TimeoutTypes = None,
@@ -118,7 +119,7 @@ class ConnectionPool(AsyncDispatcher):
         connection = await self.acquire_connection(origin=request.url.origin)
         try:
             response = await connection.send(
-                request, verify=verify, cert=cert, timeout=timeout
+                request, proxies=proxies, verify=verify, cert=cert, timeout=timeout
             )
         except BaseException as exc:
             self.active_connections.remove(connection)

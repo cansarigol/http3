@@ -11,6 +11,7 @@ from httpx import (
     AsyncResponse,
     CertTypes,
     NotRedirectResponse,
+    ProxyTypes,
     RedirectBodyUnavailable,
     RedirectLoop,
     TimeoutTypes,
@@ -24,6 +25,7 @@ class MockDispatch(AsyncDispatcher):
     async def send(
         self,
         request: AsyncRequest,
+        proxies: ProxyTypes = None,
         verify: VerifyTypes = None,
         cert: CertTypes = None,
         timeout: TimeoutTypes = None,

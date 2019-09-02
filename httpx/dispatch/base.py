@@ -7,6 +7,7 @@ from ..models import (
     AsyncRequestData,
     AsyncResponse,
     HeaderTypes,
+    ProxyTypes,
     QueryParamTypes,
     Request,
     RequestData,
@@ -42,6 +43,7 @@ class AsyncDispatcher:
     async def send(
         self,
         request: AsyncRequest,
+        proxies: ProxyTypes = None,
         verify: VerifyTypes = None,
         cert: CertTypes = None,
         timeout: TimeoutTypes = None,
@@ -80,16 +82,20 @@ class Dispatcher:
         data: RequestData = b"",
         params: QueryParamTypes = None,
         headers: HeaderTypes = None,
+        proxies: ProxyTypes = None,
         verify: VerifyTypes = None,
         cert: CertTypes = None,
         timeout: TimeoutTypes = None,
     ) -> Response:
         request = Request(method, url, data=data, params=params, headers=headers)
-        return self.send(request, verify=verify, cert=cert, timeout=timeout)
+        return self.send(
+            request, proxies=proxies, verify=verify, cert=cert, timeout=timeout
+        )
 
     def send(
         self,
         request: Request,
+        proxies: ProxyTypes = None,
         verify: VerifyTypes = None,
         cert: CertTypes = None,
         timeout: TimeoutTypes = None,

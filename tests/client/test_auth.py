@@ -10,6 +10,7 @@ from httpx import (
     AsyncResponse,
     CertTypes,
     Client,
+    ProxyTypes,
     TimeoutTypes,
     VerifyTypes,
 )
@@ -19,6 +20,7 @@ class MockDispatch(AsyncDispatcher):
     async def send(
         self,
         request: AsyncRequest,
+        proxies: ProxyTypes = None,
         verify: VerifyTypes = None,
         cert: CertTypes = None,
         timeout: TimeoutTypes = None,

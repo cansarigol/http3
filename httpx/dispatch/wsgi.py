@@ -2,7 +2,7 @@ import io
 import typing
 
 from ..config import CertTypes, TimeoutTypes, VerifyTypes
-from ..models import Request, Response
+from ..models import ProxyTypes, Request, Response
 from .base import Dispatcher
 
 
@@ -57,6 +57,7 @@ class WSGIDispatch(Dispatcher):
     def send(
         self,
         request: Request,
+        proxies: ProxyTypes = None,
         verify: VerifyTypes = None,
         cert: CertTypes = None,
         timeout: TimeoutTypes = None,

@@ -20,8 +20,10 @@ class HTTP2Connection:
         stream: BaseStream,
         backend: ConcurrencyBackend,
         on_release: typing.Callable = None,
+        client_stream: typing.Optional[BaseStream] = None,
     ):
         self.stream = stream
+        self.client_stream = client_stream
         self.backend = backend
         self.on_release = on_release
         self.h2_state = h2.connection.H2Connection()

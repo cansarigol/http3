@@ -34,8 +34,10 @@ class HTTP11Connection:
         stream: BaseStream,
         backend: ConcurrencyBackend,
         on_release: typing.Optional[OnReleaseCallback] = None,
+        client_stream: BaseStream = None,
     ):
         self.stream = stream
+        self.client_stream = client_stream
         self.backend = backend
         self.on_release = on_release
         self.h11_state = h11.Connection(our_role=h11.CLIENT)

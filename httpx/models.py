@@ -43,6 +43,8 @@ PrimitiveData = typing.Optional[typing.Union[str, int, float, bool]]
 
 URLTypes = typing.Union["URL", str]
 
+ProxyTypes = typing.Optional[typing.Dict[str, URLTypes]]
+
 QueryParamTypes = typing.Union[
     "QueryParams",
     typing.Mapping[str, PrimitiveData],
@@ -138,6 +140,13 @@ class URL:
         port = self._uri_reference.port
         if port is None:
             return {"https": 443, "http": 80}[self.scheme]
+        return int(port)
+
+    @property
+    def port_nullable(self) -> typing.Optional[int]:
+        port = self._uri_reference.port
+        if port is None:
+            return None
         return int(port)
 
     @property

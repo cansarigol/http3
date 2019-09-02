@@ -11,6 +11,7 @@ from httpx import (
     Client,
     Dispatcher,
     HTTPVersionTypes,
+    ProxyTypes,
     Request,
     Response,
     TimeoutTypes,
@@ -23,6 +24,7 @@ class MockDispatch(Dispatcher):
     def send(
         self,
         request: Request,
+        proxies: ProxyTypes = None,
         verify: VerifyTypes = None,
         cert: CertTypes = None,
         timeout: TimeoutTypes = None,
