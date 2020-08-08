@@ -1,4 +1,4 @@
-from httpx import URL, AsyncClient, Cookies, Headers, Timeout
+from httpx import URL, AsyncClient, Cookies, DigestAuth, Headers, Timeout
 
 
 def test_client_base_url():
@@ -49,3 +49,13 @@ def test_client_timeout():
     assert client.timeout.read == expected_timeout
     assert client.timeout.write == expected_timeout
     assert client.timeout.pool == expected_timeout
+
+
+def test_client_auth():
+    auth = DigestAuth(username="tomchristie", password="password123")
+    client = AsyncClient()
+
+    client.auth = auth
+
+    assert isinstance(client.auth, DigestAuth)
+    assert client.auth == auth

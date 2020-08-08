@@ -69,7 +69,7 @@ class BaseClient:
     ):
         self._base_url = self._enforce_trailing_slash(URL(base_url))
 
-        self.auth = auth
+        self._auth = auth
         self._params = QueryParams(params)
         self._headers = Headers(headers)
         self._cookies = Cookies(cookies)
@@ -77,6 +77,14 @@ class BaseClient:
         self.max_redirects = max_redirects
         self._trust_env = trust_env
         self._netrc = NetRCInfo()
+
+    @property
+    def auth(self) -> typing.Optional[AuthTypes]:
+        return self._auth
+
+    @auth.setter
+    def auth(self, auth: AuthTypes) -> None:
+        self._auth = auth
 
     @property
     def trust_env(self) -> bool:
